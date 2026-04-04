@@ -16,35 +16,39 @@ import java.util.Map;
 @Service
 public class NasaService {
 
-    private final String API_KEY = "4loT4Bo1hSX00nAyo1efdefMj0Z6dBWqEso0yjSI";
+    @Value("${nasa.api.key}")
+    private String API_KEY;
     private final String BASE_URL = "https://api.nasa.gov/planetary/apod";
-    @Value("${image.dir}")
+
+    // Default for Docker if not provided
+    @Value("${image.dir:/app/apod-images/}")
     private String IMAGE_DIR;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public NasaDto getTodayApod() {
-        LocalDate date = LocalDate.now();
-        return getApodByDate(date);
+        return getApodByDate(LocalDate.now());
     }
 
     public NasaDto getApodByDate(LocalDate date) {
         try {
             String fileName = date + ".jpg";
-            Path imagePath = Paths.get(IMAGE_DIR + fileName);
-            Path metaPath = Paths.get(IMAGE_DIR + date + ".json");
 
+            Path imagePath = Paths.get(IMAGE_DIR, fileName);
+            Path metaPath = Paths.get(IMAGE_DIR, date + ".json");
 
+            // 1. Check cache
             if (Files.exists(imagePath) && Files.exists(metaPath)) {
                 ApodMetadata meta = objectMapper.readValue(metaPath.toFile(), ApodMetadata.class);
 
                 return new NasaDto(
                         meta.getTitle(),
                         meta.getExplanation(),
-                        "http://192.168.0.101:8080/apod-images/" + fileName
+                        "/apod-images/" + fileName
                 );
             }
 
-            //  2. Call NASA API
+            // 2. Call NASA API
             String url = BASE_URL + "?api_key=" + API_KEY + "&date=" + date;
 
             RestTemplate restTemplate = new RestTemplate();
@@ -54,7 +58,7 @@ public class NasaService {
 
             String mediaType = (String) response.get("media_type");
 
-            //  Skip video → fallback
+            // Skip videos
             if (!"image".equals(mediaType)) {
                 return getApodByDate(date.minusDays(1));
             }
@@ -67,17 +71,15 @@ public class NasaService {
                 imageUrl = (String) response.get("url");
             }
 
-            // 3. Save image
+            // 3. Save image + metadata
             saveImage(imageUrl, imagePath);
-
-            // 4. Save metadata
             saveMetadata(metaPath, title, explanation);
 
-            //  5. Return response
+            // 4. Return response
             return new NasaDto(
                     title,
                     explanation,
-                    "http://192.168.0.101:8080/apod-images/" + fileName
+                    "/apod-images/" + fileName
             );
 
         } catch (Exception e) {
@@ -86,11 +88,11 @@ public class NasaService {
         }
     }
 
-    //  Save image
+    // Save image
     private void saveImage(String imageUrl, Path path) {
         try (InputStream in = new URL(imageUrl).openStream()) {
-            Files.createDirectories(path.getParent());
 
+            Files.createDirectories(path.getParent());
             Files.copy(in, path, StandardCopyOption.REPLACE_EXISTING);
 
             System.out.println("Image saved: " + path.toAbsolutePath());
@@ -100,11 +102,12 @@ public class NasaService {
         }
     }
 
-    //  Save metadata JSON
+    // Save metadata
     private void saveMetadata(Path path, String title, String explanation) {
         try {
-            ApodMetadata meta = new ApodMetadata(title, explanation);
+            Files.createDirectories(path.getParent());
 
+            ApodMetadata meta = new ApodMetadata(title, explanation);
             objectMapper.writeValue(path.toFile(), meta);
 
             System.out.println("Metadata saved: " + path.toAbsolutePath());
