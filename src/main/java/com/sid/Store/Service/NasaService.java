@@ -3,6 +3,7 @@ package com.sid.Store.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sid.Store.dto.ApodMetadata;
 import com.sid.Store.dto.NasaDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,8 +18,8 @@ public class NasaService {
 
     private final String API_KEY = "4loT4Bo1hSX00nAyo1efdefMj0Z6dBWqEso0yjSI";
     private final String BASE_URL = "https://api.nasa.gov/planetary/apod";
-    private final String IMAGE_DIR = "C:/Users/Sid/OneDrive/Desktop/Store/Store/apod-images/";
-
+    @Value("${image.dir}")
+    private String IMAGE_DIR;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public NasaDto getTodayApod() {
