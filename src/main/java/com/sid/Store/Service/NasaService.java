@@ -3,6 +3,7 @@ package com.sid.Store.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sid.Store.dto.ApodMetadata;
 import com.sid.Store.dto.NasaDto;
+import com.sid.Store.dto.UserData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +16,8 @@ import java.util.Map;
 
 @Service
 public class NasaService {
+
+
 
     @Value("${nasa.api.key}")
     private String API_KEY;
@@ -30,6 +33,9 @@ public class NasaService {
         return getApodByDate(LocalDate.now());
     }
 
+//    public String loginUser(UserData loginInfo){
+//        return loginInfo.getUserName() ;
+//    }
     public NasaDto getApodByDate(LocalDate date) {
         try {
             String fileName = date + ".jpg";
@@ -101,6 +107,8 @@ public class NasaService {
             e.printStackTrace();
         }
     }
+
+
 
     // Save metadata
     private void saveMetadata(Path path, String title, String explanation) {
