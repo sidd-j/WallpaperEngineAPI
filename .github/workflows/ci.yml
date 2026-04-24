@@ -23,3 +23,7 @@ jobs:
 
       - name: Build & Test
         run: mvn clean verify
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
