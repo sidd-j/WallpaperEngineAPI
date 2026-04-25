@@ -20,7 +20,7 @@ public class LoginTest extends ApplicationTests {
                 .contentType(ContentType.JSON)
                 .body(payload)
                 .when()
-                .post("/login")
+                .post("/loginUser")
                 .then()
                 .statusCode(200)
                 .body("token", notNullValue());
@@ -39,7 +39,7 @@ public class LoginTest extends ApplicationTests {
                 .contentType(ContentType.JSON)
                 .body(payload)
                 .when()
-                .post("/login")
+                .post("/loginUser")
                 .then()
                 .statusCode(401)
                 .body("message", containsString("Invalid"));
