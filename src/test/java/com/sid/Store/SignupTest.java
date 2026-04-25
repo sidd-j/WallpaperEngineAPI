@@ -58,7 +58,7 @@ public class SignupTest extends ApplicationTests {
                 .when()
                 .post("/registerUser")
                 .then()
-                .statusCode(409)
+                .statusCode(409) // ✅ FIX
                 .body(containsString("Email already registered"));
     }
 
