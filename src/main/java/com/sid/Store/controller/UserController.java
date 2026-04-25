@@ -51,8 +51,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Invalid input data");
         }
 
-        return ResponseEntity.ok(userService.registerUser(data));
-    }
+        return ResponseEntity.status(201).body(userService.registerUser(data));    }
 
     @PostMapping("/loginUser")
     public ResponseEntity<?> loginUser(@RequestBody UserData data) {
@@ -64,7 +63,7 @@ public class UserController {
         }
 
 
-        return ResponseEntity.ok(userService.loginUser(data));
+        return ResponseEntity.status(201).body(userService.loginUser(data));
     }
 
 
