@@ -1,20 +1,41 @@
 package com.sid.Store;
 
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 public class LoginTest extends ApplicationTests {
 
+    private final String email = "test@example.com";
+    private final String password = "Password123";
+
+    @BeforeEach
+    public void setupUser() {
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("email", email);
+        payload.put("password", password);
+        payload.put("name", "Test User");
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(payload)
+                .when()
+                .post("/registerUser");
+    }
+
     @Test
     public void validLoginTest() {
-        String payload = """
-        {
-            "email": "test@example.com",
-            "password": "Password123"
-        }
-        """;
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("email", email);
+        payload.put("password", password);
 
         given()
                 .contentType(ContentType.JSON)
@@ -28,12 +49,10 @@ public class LoginTest extends ApplicationTests {
 
     @Test
     public void invalidPasswordTest() {
-        String payload = """
-        {
-            "email": "test@example.com",
-            "password": "wrongpass"
-        }
-        """;
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("email", email);
+        payload.put("password", "wrongpass");
 
         given()
                 .contentType(ContentType.JSON)
@@ -42,17 +61,19 @@ public class LoginTest extends ApplicationTests {
                 .post("/loginUser")
                 .then()
                 .statusCode(401)
-                .body("message", containsString("Invalid"));
+                .body(containsString("Invalid password")); // ✅ FIXED
     }
 
     @Test
     public void emptyFieldsTest() {
+
         given()
                 .contentType(ContentType.JSON)
                 .body("{}")
                 .when()
-                .post("/registerUser")
+                .post("/loginUser") // ✅ FIXED
                 .then()
-                .statusCode(400);
+                .statusCode(400)
+                .body(containsString("Invalid input data"));
     }
 }

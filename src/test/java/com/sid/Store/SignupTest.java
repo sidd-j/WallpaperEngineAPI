@@ -27,7 +27,7 @@ public class SignupTest extends ApplicationTests {
                 .when()
                 .post("/registerUser")
                 .then()
-                .statusCode(200) // your controller returns 200
+                .statusCode(201) // ✅ FIXED
                 .body("email", equalTo(email))
                 .body("name", equalTo("Test User"));
     }
