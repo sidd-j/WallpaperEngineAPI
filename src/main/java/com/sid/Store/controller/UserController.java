@@ -63,7 +63,7 @@ public class UserController {
         }
 
 
-        return ResponseEntity.status(201).body(userService.loginUser(data));
+        return ResponseEntity.status(200).body(userService.loginUser(data));
     }
 
 

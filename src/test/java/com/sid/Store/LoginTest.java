@@ -51,7 +51,7 @@ public class LoginTest extends ApplicationTests {
                 .contentType(ContentType.JSON)
                 .body("{}")
                 .when()
-                .post("/login")
+                .post("/registerUser")
                 .then()
                 .statusCode(400);
     }
