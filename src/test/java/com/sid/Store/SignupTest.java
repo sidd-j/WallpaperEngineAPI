@@ -49,7 +49,7 @@ public class SignupTest extends ApplicationTests {
                 .when()
                 .post("/registerUser")
                 .then()
-                .statusCode(200);
+                .statusCode(201); // ✅ FIXED
 
         // Second call → should fail
         given()
@@ -58,10 +58,9 @@ public class SignupTest extends ApplicationTests {
                 .when()
                 .post("/registerUser")
                 .then()
-                .statusCode(409) // ✅ FIX
+                .statusCode(409)
                 .body(containsString("Email already registered"));
     }
-
     @Test
     public void emptyFieldsTest() {
 
