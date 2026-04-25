@@ -1,8 +1,7 @@
 package com.sid.Store;
 
 import io.restassured.http.ContentType;
-import org.testng.annotations.Test;
-
+import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
