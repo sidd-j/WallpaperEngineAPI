@@ -27,7 +27,7 @@ public class SignupTest extends ApplicationTests {
                 .when()
                 .post("/registerUser")
                 .then()
-                .statusCode(201) // ✅ FIXED
+                .statusCode(201) //
                 .body("email", equalTo(email))
                 .body("name", equalTo("Test User"));
     }
@@ -35,7 +35,7 @@ public class SignupTest extends ApplicationTests {
     @Test
     public void duplicateEmailTest() {
 
-        String email = "duplicate@test.com";
+        String email = "user" + System.currentTimeMillis() + "@test.com";
 
         Map<String, Object> payload = new HashMap<>();
         payload.put("email", email);
@@ -49,8 +49,7 @@ public class SignupTest extends ApplicationTests {
                 .when()
                 .post("/registerUser")
                 .then()
-                .statusCode(201); // ✅ FIXED
-
+                .statusCode(201); //
         // Second call → should fail
         given()
                 .contentType(ContentType.JSON)
