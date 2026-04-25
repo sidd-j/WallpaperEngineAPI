@@ -10,6 +10,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASS: ${{ secrets.DB_PASS }}
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -21,9 +26,5 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Build & Test
+      - name: Build & Run Tests
         run: mvn clean verify
-        env:
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASS: ${{ secrets.DB_PASS }}
